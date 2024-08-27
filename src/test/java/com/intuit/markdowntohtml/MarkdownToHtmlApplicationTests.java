@@ -56,8 +56,8 @@ public class MarkdownToHtmlApplicationTests {
     @Test
     void testConvertMarkdownToHtml_ValidMarkdown() {
         // Arrange
-        String markdown = "# Hello World\nThis is **Markdown**";
-        String expectedHtml = "<h1>Hello World</h1>\n<p>This is <strong>Markdown</strong></p>";
+        String markdown = "# Hello World\nThis is Markdown";
+        String expectedHtml = "<h1>Hello World</h1>\n<p>This is Markdown</p>";
         when(markdownService.convertToHtml(markdown)).thenReturn(expectedHtml);
 
         // Act
