@@ -99,4 +99,3 @@ public class MarkdownService {
         return line.matches("<h\\d+>.*</h\\d+>");
     }
 }
-
