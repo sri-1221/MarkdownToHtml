@@ -2,6 +2,9 @@ package com.intuit.markdowntohtml.service;
 
 import org.springframework.stereotype.Service;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 @Service
 public class MarkdownService {
 
@@ -12,7 +15,8 @@ public class MarkdownService {
         }
 
         // Convert Markdown to HTML
-        String html = convertHeadingsToHtml(markdown);
+        String html = escapeHtml(markdown);
+        html = convertHeadingsToHtml(html);
         html = convertLinksToHtml(html);
         html = wrapUnformattedTextInParagraphs(html);
 
@@ -48,7 +52,7 @@ public class MarkdownService {
     private String convertLinksToHtml(String markdown) {
         StringBuilder result = new StringBuilder();
         int pos = 0;
-
+        String url=null;
         while (pos < markdown.length()) {
             int startLink = markdown.indexOf("[", pos);
             if (startLink == -1) {
@@ -64,12 +68,10 @@ public class MarkdownService {
             if (endUrl == -1) break;
 
             String linkText = markdown.substring(startLink + 1, endLinkText);
-            String url = markdown.substring(startUrl + 1, endUrl);
+            url = markdown.substring(startUrl + 1, endUrl);
             result.append(String.format("<a href=\"%s\">%s</a>", url, linkText));
-
             pos = endUrl + 1;
         }
-
         return result.toString();
     }
 
@@ -88,7 +90,7 @@ public class MarkdownService {
                             .append(trimmedBlock.replaceAll("\\s+", " "))
                             .append("</p>\n\n");
                 } else {
-                    result.append(trimmedBlock).append("\n");
+                    result.append(trimmedBlock).append("\n\n");
                 }
             }
         }
@@ -98,4 +100,13 @@ public class MarkdownService {
     private boolean isHtmlHeading(String line) {
         return line.matches("<h\\d+>.*</h\\d+>");
     }
+    private String escapeHtml(String text) {
+        if (text == null) return null;
+        return text.replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("'", "&#39;");
+    }
+
 }
